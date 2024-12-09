@@ -1,0 +1,2 @@
+Principle of optimality: A problem can be solved by taking a sequence of decisions to obtain an optimal solution
+
