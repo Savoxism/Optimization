@@ -52,7 +52,7 @@ def add_obj_row(tableau, C, n, m):
     tableau.append(obj_row)
     return tableau
 
-def simplex_method(tableau, n, m):
+def simplex_method(tableau, n):
     while True:
         # Check for optimality
         if all(c >= 0 for c in tableau[-1][:-1]):
@@ -101,7 +101,7 @@ def solve():
     tableau = add_slack_variables(A, b, m)
     tableau = add_obj_row(tableau, C, n, m)
     
-    solution, optimal_value, status = simplex_method(tableau, n, m)
+    solution, optimal_value, status = simplex_method(tableau, n)
     
     if status == "OPTIMAL":
         print(n)
