@@ -2,3 +2,4 @@ Principle of optimality: A problem can be solved by taking a sequence of decisio
 
 Memoization: top-down approach 
 
+cost(i, j) = min(c(j, l) + cost(i + 1, l))
