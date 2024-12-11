@@ -7,7 +7,6 @@ class Node:
         self.u = u  
         self.c = c  
 
-    # Comparator for priority queue (max-heap based on bound)
     def __lt__(self, other):
         return self.bound > other.bound
 
