@@ -4,7 +4,6 @@ def prims_algorithm(graph, start_node):
     visited = set()
     edges = []
     
-    
     # Start with the start node
     visited.add(start_node)
     edges.extend([(start_node, neighbor, weight) for neighbor, weight in graph[start_node]])
