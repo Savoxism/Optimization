@@ -1,0 +1,8 @@
+- The minimum spanning tree provides a good lower bound for the cost of TSP tour because we might never know the optimal solution but we can be certain that the MST < optimal solution -> Compare the ratio of a feasible solution to the MST
+
+Since the MST connects all vertices with the minimal total edge weight (but does not necessarily form a tour), its weight will always be less than or equal to the cost of the optimal TSP solution.
+
+
+Some TSP problems have two big assumptions:
+1) It is symmetric TSP 
+2) The triangle inequality holds
