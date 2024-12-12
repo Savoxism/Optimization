@@ -45,5 +45,7 @@ n, cost_matrix = read_input()
 
 tour, total_cost = nearest_neighbor_tsp(n, cost_matrix)
 
-print(tour)
+new_tour = ' '.join(str(city) for city in tour)
+
+print(new_tour)
 print(total_cost)

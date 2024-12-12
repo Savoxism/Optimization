@@ -78,7 +78,7 @@ def solve_tsp():
                     
         # for i in range(num_cities + 1):
         #     print(f"y({i}) = {solver.Value(y[i])}") 
-    else:
+    else: 
         print("No solution found")
         
         

@@ -45,8 +45,8 @@ def add_slack_variables(A, b, m):
 
 def add_obj_row(tableau, C, n, m):
     obj_row = [-C[i] if i < n else 0 for i in range(n)]
-    obj_row += [0] * m
-    obj_row += [0] 
+    obj_row += [0] * m # Slack variables
+    obj_row += [0] # RHS
     
     # Append the objective row to the tableau
     tableau.append(obj_row)

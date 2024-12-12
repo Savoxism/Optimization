@@ -1,6 +1,10 @@
 from collections import defaultdict
-import heapq
-import sys 
+import sys
+ 
+'''
+Assumption 1: Symmetric TSP
+Assumption 2: Triangle Inequality holds
+'''
 
 def read_input():
     n = int(sys.stdin.readline().strip())
@@ -13,19 +17,24 @@ def read_input():
 def compute_mst(n, cost_matrix):
     mst = defaultdict(list)
     visited = [False] * n
-    min_heap = [(0, 0, -1)]  # (cost, current_node, parent)
-
-    while min_heap:
-        cost, current, parent = heapq.heappop(min_heap)
+    priority_queue = [(0, 0, -1)] # (cost, node, parent)
+    
+    while priority_queue:
+        priority_queue.sort(key=lambda x: x[0])
+        cost, current, parent = priority_queue.pop(0)
+        
         if visited[current]:
             continue
+        
         visited[current] = True
+        
         if parent != -1:
             mst[parent].append(current)
             mst[current].append(parent)
+            
         for neighbor in range(n):
             if not visited[neighbor]:
-                heapq.heappush(min_heap, (cost_matrix[current][neighbor], neighbor, current))
+                priority_queue.append((cost_matrix[current][neighbor], neighbor, current))        
     return mst
 
 def preorder_traversal(mst, start):
@@ -64,33 +73,45 @@ def generate_heuristic_solution(n, cost_matrix):
 
     return total_cost
 
-def compute_one_tree(n, cost_matrix, excluded_node):
-    reduced_cost_matrix = [row[:excluded_node] + row[excluded_node + 1:] for i, row in enumerate(cost_matrix) if i != excluded_node]
-    reduced_n = n - 1
+def compute_one_tree(num_nodes, cost_matrix, excluded_node):
+    # Reduce the cost matrix to exclude the specified node
+    reduced_cost_matrix = [
+        row[:excluded_node] + row[excluded_node + 1:]
+        for i, row in enumerate(cost_matrix) if i != excluded_node
+    ]
+    reduced_num_nodes = num_nodes - 1
 
-    mst = compute_mst(reduced_n, reduced_cost_matrix)
+    # Compute the MST on the reduced cost matrix
+    mst = compute_mst(reduced_num_nodes, reduced_cost_matrix)
 
-    node_map = list(range(n))
-    node_map.pop(excluded_node)
+    # Map the reduced node indices back to the original indices
+    node_mapping = list(range(num_nodes))
+    node_mapping.pop(excluded_node)
 
-    full_mst = defaultdict(list)
-    for i in range(reduced_n):
-        for j in mst[i]:
-            full_mst[node_map[i]].append(node_map[j])
+    one_tree = defaultdict(list)
+    for reduced_node in range(reduced_num_nodes):
+        for connected_node in mst[reduced_node]:
+            one_tree[node_mapping[reduced_node]].append(node_mapping[connected_node])
 
-    min_edges = sorted([(cost_matrix[excluded_node][i], i) for i in range(n) if i != excluded_node])[:2]
+    # Find the two smallest edges connecting the excluded node
+    smallest_edges = sorted([
+        (cost_matrix[excluded_node][neighbor], neighbor)
+        for neighbor in range(num_nodes) if neighbor != excluded_node
+    ])[:2]
 
-    full_mst[excluded_node] = [min_edges[0][1], min_edges[1][1]]
-    full_mst[min_edges[0][1]].append(excluded_node)
-    full_mst[min_edges[1][1]].append(excluded_node)
+    # Add the excluded node and its connections to the one-tree
+    one_tree[excluded_node] = [smallest_edges[0][1], smallest_edges[1][1]]
+    one_tree[smallest_edges[0][1]].append(excluded_node)
+    one_tree[smallest_edges[1][1]].append(excluded_node)
 
+    # Calculate the total cost of the one-tree
     one_tree_cost = 0
     visited_edges = set()
-    for i in full_mst:
-        for j in full_mst[i]:
-            if (i, j) not in visited_edges and (j, i) not in visited_edges:
-                one_tree_cost += cost_matrix[i][j]
-                visited_edges.add((i, j))
+    for node in one_tree:
+        for connected_node in one_tree[node]:
+            if (node, connected_node) not in visited_edges and (connected_node, node) not in visited_edges:
+                one_tree_cost += cost_matrix[node][connected_node]
+                visited_edges.add((node, connected_node))
 
     return one_tree_cost
 
@@ -116,10 +137,8 @@ def compare_with_optimal_solution(n, cost_matrix):
 def main():
     n, cost_matrix = read_input()
 
-    # Step 1: Generate heuristic solution
     heuristic_cost = generate_heuristic_solution(n, cost_matrix)
 
-    # Step 2: Compute lower bound using one-trees
     lower_bound = compute_lower_bound(n, cost_matrix)
 
     # Step 3: Compare heuristic solution with optimal solution (if feasible)
