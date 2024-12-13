@@ -109,7 +109,7 @@ def ACO(n, cost_matrix, alpha=1, beta=2, p=0.1, q=100, iterations=100):
             
         # Debug: Print reduction in distance
         if iteration > 0:
-            print(f"Iteration {iteration}: Distance reduced by {previous_best_cost - best_cost:.2f}")
+            print(f"Iteration {iteration}, Best cost: {best_cost:.2f}")
         previous_best_cost = best_cost
         
         # Update pheromone matrix
