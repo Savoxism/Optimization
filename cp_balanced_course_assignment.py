@@ -79,3 +79,4 @@ m, n, A, B = read_input()
 value, assigments = cp_solve(m, n, A, B)
 
 print(value)
+print(assigments)
