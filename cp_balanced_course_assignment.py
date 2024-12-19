@@ -11,7 +11,7 @@ def read_input():
         line = list(map(int, sys.stdin.readline().strip().split()))
         courses = [x - 1 for x in line[1:]]  # Skip the first number (k) and convert to zero-based indexing
         A.append(courses)
-    
+     
     # Read the number of conflicts
     k = int(sys.stdin.readline().strip())
     
