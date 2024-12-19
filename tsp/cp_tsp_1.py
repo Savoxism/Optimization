@@ -71,13 +71,13 @@ def solve_tsp():
     
     if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
         print(solver.Value(y[num_cities]))
-        # for i in range(num_cities + 1):
-        #     for j in range(num_cities + 1):
-        #         if solver.Value(x[i, j]) > 0:
-        #             print(f"x[{i}, {j}] = {solver.Value(x[i, j])}")
+        for i in range(num_cities + 1):
+            for j in range(num_cities + 1):
+                if solver.Value(x[i, j]) > 0:
+                    print(f"x[{i}, {j}] = {solver.Value(x[i, j])}")
                     
-        # for i in range(num_cities + 1):
-        #     print(f"y({i}) = {solver.Value(y[i])}") 
+        for i in range(num_cities + 1):
+            print(f"y({i}) = {solver.Value(y[i])}") 
     else: 
         print("No solution found")
         

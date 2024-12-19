@@ -78,17 +78,17 @@ def solve_tsp(n, cost_matrix):
         
     # Extract the final tour
     current_city = 0
-    tour = [current_city + 1]
+    tour = [current_city + 1]  # Convert to 1-based indexing
     for _ in range(n - 1):
         for j in range(n):
             if x_val[current_city][j] == 1:
-                tour.append(j + 1)
+                tour.append(j + 1)  # Convert to 1-based indexing
                 current_city = j
                 break
-            
+    
+    # Output the results in the desired format
     print(n)
-    print(solver.Objective().Value())
-    print(" -> ".join(map(str, tour)))
+    print(" ".join(map(str, tour)))
 
 if __name__ == "__main__":
     n, cost_matrix = read_input()
