@@ -2,7 +2,6 @@
 
 Since the MST connects all vertices with the minimal total edge weight (but does not necessarily form a tour), its weight will always be less than or equal to the cost of the optimal TSP solution.
 
-
 Some TSP problems have two big assumptions:
 1) It is symmetric TSP 
 2) The triangle inequality holds
