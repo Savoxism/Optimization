@@ -93,7 +93,6 @@ def update_best():
     if f < f_star:
         f_star = f
         
-        
 n, K, Q = (int(x) for x in input().split())
 d = [0] + [int (x) for x in input().split()]
 dist_matrix = []
