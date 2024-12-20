@@ -21,8 +21,6 @@ def solve_n_queens(row, n, board, results):
             solve_n_queens(row + 1, n, board, results)
             board[row] = -1
             
-    
-    
 solve_n_queens(0, n, board, results)
 
 print(results)

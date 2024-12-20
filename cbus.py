@@ -23,7 +23,7 @@ def CBUS(n, k, dist_matrix):
         for i in range(2 * n + 1)
         for j in range(2 * n + 1)
         if i != j
-    )  # Minimum distance between any two points 
+    ) 
     
     # Check if visiting point v at step k is feasible
     def check(vertex, load):

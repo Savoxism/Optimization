@@ -1,4 +1,3 @@
-
 def kruskals_algorithm(graph):
     mst = []
     edges = []

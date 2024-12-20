@@ -1,70 +1,103 @@
+import sys 
+
 def read_input():
-    import sys
-    input = sys.stdin.read
-    data = input().splitlines()
+    n = int(sys.stdin.readline().strip())
+    
+    variables = []
+    for i in range(n):
+        line = list(map(int, sys.stdin.readline().split()))
+        variables.append(Variable(f"X{i + 1}", line[1:]))
 
-    n, m, s, L = map(int, data[0].split())
-    edges = []
-    for line in data[1:]:
-        u, v, t, c = map(int, line.split())
-        edges.append((u, v, t, c))
+    m = int(sys.stdin.readline().strip())
 
-    return n, m, s, L, edges
+    constraints = []
+    for i in range(m):
+        xi, xj, d = map(int, sys.stdin.readline().split())
+        constraints.append((variables[xi - 1], variables[xj - 1], d))
+        constraints.append((variables[xj - 1], variables[xi - 1], -d))
 
-def dijkstra_broadcast(n, edges, source, max_time):
-    # Graph representation
-    graph = {i: [] for i in range(1, n + 1)}
-    for u, v, t, c in edges:
-        graph[u].append((v, t, c))
-        graph[v].append((u, t, c))  # Undirected graph: edge added both ways
+    return variables, constraints
 
-    # Priority queue: (time, cost, current_node, previous_node)
-    pq = [(0, 0, source, -1)]
+class Variable:
+    def __init__(self, name, domain):
+        self.name = name
+        self.domain = set(domain)
+    
+    def remove(self, value):
+        if value in self.domain:
+            self.domain.remove(value)
 
-    # Tracking structures
-    min_time = {i: float('inf') for i in range(1, n + 1)}
-    min_cost = {i: float('inf') for i in range(1, n + 1)}
-    visited = set()
-    broadcast_tree = []
+    def is_empty(self):
+        return len(self.domain) == 0
 
-    min_time[source] = 0
-    min_cost[source] = 0
+class Constraint:
+    def __init__(self, var1, var2, delta):
+        self.var1 = var1
+        self.var2 = var2
+        self.delta = delta
 
-    total_cost = 0
+    def is_satisfied(self, val1, val2):
+        return val1 <= val2 + self.delta
 
-    while pq:
-        # Sort by time, then by cost
-        pq.sort()
-        curr_time, curr_cost, node, parent = pq.pop(0)
+class ArcConsistency:
+    def __init__(self, variables, arcs):
+        self.variables = variables
+        self.arcs = arcs
+        self.agenda = arcs.copy()
+        
+    def revise(self, arc):
+        var1, var2, delta = arc
+        revised = False
+        to_remove = set()
+        
+        for val1 in var1.domain:
+            satisfies = any(
+                val1 <= val2 + delta 
+                for val2 in var2.domain
+            )
+            # If no value in var2's domain satisfies the constraint, remove val1
+            if not satisfies:
+                to_remove.add(val1)
+                revised = True
+                
+        for val in to_remove:
+            var1.remove(val)    
+            
+        return revised
+    
+    def run(self):
+        while self.agenda:
+            arc = self.agenda.pop(0)
+            
+            var1, var2, _ = arc
+            
+            if self.revise(arc):
+                if var1.is_empty():
+                    return False
+                
+                # This condition ensures that we don't add an arc to the agenda if it's already there and right side of the constraint is the same as the considered variable
+                for other_arc in self.arcs:
+                    if other_arc[1] == var1 and other_arc not in self.agenda:
+                        self.agenda.append(other_arc)
+                        
+        return True
+    
+# Read input from stdin
+variables, constraints = read_input()
 
-        if node in visited:
-            continue
+# Create arcs and agenda
+arcs = [(c[0], c[1], c[2]) for c in constraints]
 
-        visited.add(node)
+print("Initial Arc List:")
+for arc in arcs:
+    print(f"{arc[0].name} -> {arc[1].name} with D = {arc[2]}")
 
-        # If this is a valid edge (not the source), add to the broadcast tree
-        if parent != -1:
-            broadcast_tree.append((parent, node))
-            total_cost += curr_cost
+arc_consistency = ArcConsistency(variables, arcs)
 
-        for neighbor, time, cost in graph[node]:
-            new_time = curr_time + time
-            new_cost = cost
+if arc_consistency.run():
+    for var in variables:
+        sorted_domain = sorted(var.domain)
+        print(f"{len(sorted_domain)} {' '.join(map(str, sorted_domain))} ")
+else:
+    print("FAIL")
 
-            if new_time <= max_time and neighbor not in visited and new_time < min_time[neighbor]:
-                min_time[neighbor] = new_time
-                min_cost[neighbor] = new_cost
-                pq.append((new_time, new_cost, neighbor, node))
-
-    # Check if all nodes are reachable
-    if len(visited) < n:
-        return "NO_SOLUTION"
-
-    # Return the total cost
-    return total_cost
-
-if __name__ == "__main__":
-    # Read inputs
-    n, m, s, L, edges = read_input()
-    result = dijkstra_broadcast(n, edges, s, L)
-    print(result)

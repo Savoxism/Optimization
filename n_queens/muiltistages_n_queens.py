@@ -36,7 +36,6 @@ def find_most_violating_queen(state):
             most_violating_queen = [row]
         elif conflicts == max_conflicts:
             most_violating_queen.append(row)
-
     return random.choice(most_violating_queen)  # Break ties randomly
 
 def find_best_position_for_queen(state, queen_row):

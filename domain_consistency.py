@@ -1,71 +1,115 @@
-import sys 
+import sys
 
-def read_input():
-    input = sys.stdin.read
-    lines = input().strip().split("\n")
+class Var:
+    def __init__(self, D, name):
+        self.Domain = D
+        self.name = name 
 
-    # Number of variables
-    n = int(lines[0])
+    def Remove(self, v):
+        self.Domain.discard(v)
 
-    # Read domains of variables
-    domains = []
-    for i in range(1, n + 1):
-        line = list(map(int, lines[i].split()))
-        k = line[0]
-        domains.append(set(line[1:k + 1]))
+    def Empty(self):
+        return len(self.Domain) == 0
 
-    # Number of constraints
-    m = int(lines[n + 1])
+class Leg:
+    def __init__(self, X, Y, D, name):
+        self.X = X
+        self.Y = Y
+        self.D = D
+        self.name = name + '(' + X.name + ' <= ' + Y.name + ' + ' + str(D) + ')'
+        self.vars = [X, Y]
 
-    # Read constraints
-    constraints = []
-    for i in range(n + 2, n + 2 + m):
-        x_i, x_j, d = map(int, lines[i].split())
-        constraints.append((x_i, x_j, d))  
+    def GetVariable(self):
+        return self.vars
 
-    return n, domains, constraints
+    def HasVariable(self, x):
+        return x == self.X or x == self.Y
 
-# Enforces domain consistency for the CSP using LEQ constraints.
-def enforce_domain_consistency(n, domains, constraints):
-    queue = list(constraints)  #
+    def Satisfy(self, vx, vy):
+        return vx <= vy + self.D
 
-    while queue:
-        i, j, d = queue.pop(0)  
-        i -= 1  # Convert to 0-based indexing internally
-        j -= 1  # Convert to 0-based indexing internally
-        new_domain_i = set()
+    def GetOtherVariable(self, x):
+        if x == self.X:
+            return self.Y
+        elif x == self.Y:
+            return self.X
+        else:
+            return None 
 
-        for val_i in domains[i]:
-            valid = False
-            for val_j in domains[j]:
-                if val_i <= val_j + d:
-                    valid = True
-                    break
-            if valid:
-                new_domain_i.add(val_i)
+class Propagator:
+    def __init__(self):
+        self.constraints = []
+        self.Q = []
 
-        if new_domain_i != domains[i]:
-            domains[i] = new_domain_i
-            if not domains[i]:
-                return "FAIL" 
+    def Add(self, constraint):
+        self.constraints.append(constraint)
 
-            # Re-enqueue constraints that depend on i
-            for x_i, x_j, d_k in constraints:
-                if x_i == i + 1: 
-                    queue.append((x_i, x_j, d_k))
+    def Contains(self, x, c):
+        for xi, ci in self.Q:
+            if x == xi and c == ci:
+                return True
+        return False
 
-    return domains
-
+    def AC3(self):
+        self.Q = []
+        for c in self.constraints:
+            for x in c.GetVariable():
+                self.Q.append([x, c])
         
-def main():
-    n, domains, constraints = read_input()
-    result = enforce_domain_consistency(n, domains, constraints)
+        while len(self.Q) > 0:
+            [x, c] = self.Q.pop(0)
+            change = self.ReviseAC3(x, c)
+            if change:
+                if x.Empty():
+                    return False
+                for c1 in self.constraints:
+                    if c1 != c and c1.HasVariable(x):
+                        y = c1.GetOtherVariable(x)
+                        if not self.Contains(y, c1):
+                            self.Q.append([y, c1])
+        return True
 
-    if result == "FAIL":
-        print("FAIL")
-    else:
-        for domain in result:
-            print(len(domain), " ".join(map(str, sorted(domain))) + " ")
+    def ReviseAC3(self, x, c):
+        change = False
+        y = c.GetOtherVariable(x)
+        R = []
+        for vx in x.Domain:
+            found = False
+            for vy in y.Domain:
+                if x == c.X and c.Satisfy(vx, vy):
+                    found = True
+                    break
+                elif x == c.Y and c.Satisfy(vy, vx):
+                    found = True
+                    break
+            if not found:
+                R.append(vx)
+                change = True
+        for v in R:
+            x.Remove(v)
+        return change
 
-if __name__ == "__main__":
-    main()
+# Input processing
+[n] = [int(x) for x in sys.stdin.readline().split()]
+variables = []
+prop = Propagator()
+
+for i in range(n):
+    line = [int(x) for x in sys.stdin.readline().split()]
+    D = set(line[1:])
+    var = Var(D, 'X(' + str(i + 1) + ')')
+    variables.append(var)
+
+[m] = [int(x) for x in sys.stdin.readline().split()]     
+for k in range(m):
+    [i, j, d] = [int(x) for x in sys.stdin.readline().split()]
+    c = Leg(variables[i - 1], variables[j - 1], d, 'Leg(' + str(k + 1) + ')')
+    prop.Add(c)
+
+ok = prop.AC3()
+if not ok:
+    print('FAIL')
+else:
+    for x in variables:
+        LD = sorted(x.Domain)
+        print(len(LD), *LD)
