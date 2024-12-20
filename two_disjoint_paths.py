@@ -46,7 +46,7 @@ def solve(no_nodes, edges, s, t):
     model.Add(sum(x[(v, t)] for v, node, _ in edges if t == node) == 1)
     model.Add(sum(y[(v, t)] for v, node, _ in edges if t == node) == 1)
     
-    # Constraint 3: Disjoint paths
+    # Constraint 3: two paths cannot share an edge 
     for u, v, w in edges:
         model.Add(x[(u, v)] + y[(u, v)] <= 1)
         
