@@ -1,0 +1,57 @@
+The Class - Course - Teacher Assignment and Timetabling
+There are T teachers (1, 2, ... T) who need to be assigned to teach subjects to classes
+There are M subjects 
+There are N classes (1, 2, ... N). Each class has a list of subjects from (1, 2, ... M). Each class-subject pair is called a "class-subject"
+Each subject m has a number of periods, denoted as d(m)
+Each teacher t has a list of subjects they can teach 
+There are 5 days in a week, 2 sessions per day, 6 periods each session
+
+Create a schedule that strictly follows this constraint
++ Class-subjects from the same class cannot have overlapping timetables -> Each class can only attend one subject at a time 
+
++ Class-subjects assigned to the same teacher cannot have overlapping timetables -> If Teacher A is teaching Math to Class 1, they cannot simultaneously teach English to Class 2.
+
++ The total number of scheduled class-subjects and teacher assignments is maximized.
+
+Inputs:
+Line 1: T (number of teachers), N (number of classes), M (number of subjects) (1 ≤ N ≤ 100, 1 ≤ M ≤ 100, 1 ≤ T ≤ 100)
+Line i + 1 (i = 1, ..., N): Contains the list of subjects that class i needs to study, ending with 0.
+Line t + N + 1 (t = 1, 2, ..., T): Contains the list of subjects that teacher t can teach, ending with 0.
+Line N + T + 2: Contains d(m), the number of hours required for subject m (m = 1, ..., M).
+
+Output: 
+Line 1: Write a positive integer K (the number of assignments).
+Line k + 1 (k = 1, ..., K): Write 4 integers x, y, u, v, where:
+x: The class number.
+y: The subject number.
+u: The starting period.
+v: The teacher assigned to the subject.
+
+
+Example 1
+Input:
+3 5 4
+2 4 0 
+2 3 4 0 
+2 3 0 
+1 2 4 0 
+1 3 0 
+1 3 0 
+2 3 0 
+1 2 4 0 
+2 4 4 4 
+
+Output:
+12
+1 2 1 2
+1 4 7 3
+2 2 1 3
+2 3 7 1
+2 4 13 3
+3 2 7 2
+3 3 1 1
+4 1 5 1
+4 2 13 2
+4 4 19 3
+5 1 5 3
+5 3 13 1

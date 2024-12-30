@@ -1,5 +1,3 @@
-
-
 def merge_sort(arr):
     n = len(arr)
     
@@ -10,7 +8,6 @@ def merge_sort(arr):
         
         merge_sort(left)
         merge_sort(right)
-        
         
         i = 0 # index of the left half
         j = 0 # index of the right half

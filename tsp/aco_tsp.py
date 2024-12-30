@@ -17,7 +17,7 @@ def initialize_matrices(n, cost_matrix):
     
     visibility_matrix = [[1 / cost_matrix[i][j] if i != j else 0 for j in range(n)] for i in range(n)]
     
-    return pheromone_matrix, visibility_matrix
+    return pheromone_matrix, visibility_matrix 
     
 def generate_initial_solution(n, pheromone_matrix, visibility_matrix, alpha=1, beta=2):
     all_tours = []
