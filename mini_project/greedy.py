@@ -73,7 +73,7 @@ def assign_classes(T, N, M, class_subjects, teacher_subjects, subject_hours):
                 
             if assigned:
                 break
-
+            
     return result
 
 def main():
