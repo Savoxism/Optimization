@@ -11,7 +11,7 @@ def read_input():
     T, N, M = map(int, data[0].split())
     
     class_subjects = []
-    for i in range(1, N + 1):
+    for i in range(1, N + 1): 
         class_subjects.append(list(map(int, data[i].split()))[:-1])
 
     teacher_subjects = []
@@ -41,7 +41,7 @@ def solve():
                 for d in range(D):
                     for s in range(S):
                         x[n, m, t, d, s] = solver.BoolVar(f"x[{n}][{m}][{t}][{d}][{s}]")
-                        
+                                          
     # Constraints
     # 1. Each subject for a class must be taught for its required number of periods
     for n in range(N):
