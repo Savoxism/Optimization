@@ -34,17 +34,19 @@ def generate_initial_solution_heuristic(T, N, M, class_subjects, teacher_subject
         
         for m in subjects_sorted:
             duration = subject_hours[m - 1]
+            
+            # Find available teachers for this subject 
             available_teachers = [t for t in range(T) if m in teacher_subjects[t]]
             
-            # Sort teachers by their availability, preferring those who are less busy
+            # Sort teachers by their current workload 
             available_teachers_sorted = sorted(available_teachers, key=lambda t: sum(len(teacher_schedules[t][day]) for day in range(DAYS)))
             
             for t in available_teachers_sorted:
                 # Find the earliest possible slot for this teacher and class
                 for d in range(DAYS):
                     for s in range(SLOTS_PER_DAY - duration + 1):
+                        # Check if all the required contiguous slots are available for both the class and the teacher. 
                         if all(slot not in class_schedules[n][d] and slot not in teacher_schedules[t][d] for slot in range(s, s + duration)):
-                            # Assign the subject to this time slot
                             for slot in range(s, s + duration):
                                 class_schedules[n][d].add(slot)
                                 teacher_schedules[t][d].add(slot)
@@ -58,7 +60,6 @@ def generate_initial_solution_heuristic(T, N, M, class_subjects, teacher_subject
                 break
             else:
                 continue
-    
     return solution
 
 def evaluate_solution(solution, subject_hours):
@@ -97,10 +98,10 @@ def evaluate_solution(solution, subject_hours):
 
 def generate_neighbor(solution, T, N, M, class_subjects, teacher_subjects, subject_hours):
     neighbor = solution.copy()
-    index = random.randint(0, len(neighbor) - 1)
-    n, m, t, d, s = neighbor[index]
+    index = random.randint(0, len(neighbor) - 1) # Choose a randon assignment 
+    n, m, t, d, s = neighbor[index] 
     
-    if random.random() < 0.5: # Can adjust probability
+    if random.random() < 0.5: 
         # Change teacher
         available_teachers = [t for t in range(T) if m in teacher_subjects[t]]
         if available_teachers:
@@ -172,7 +173,6 @@ def assignment(best_solution):
             valid_assignments.append(assignment)
     return valid_assignments
 
-
 if __name__ == "__main__":
     T, N, M, class_subjects, teacher_subjects, subject_hours = read_input()
     DAYS = 5
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     initial_temp = 1000
     cooling_rate = 0.95
     min_temp = 1
-    max_iterations = 100000  # Increased iterations
+    max_iterations = 100000  
     
     best_solution, _ = SA(T, N, M, class_subjects, teacher_subjects, subject_hours, initial_temp, cooling_rate, min_temp, max_iterations)
         
