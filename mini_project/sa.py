@@ -4,13 +4,10 @@ import random
 import math
 
 start_time = time.perf_counter()
-DAYS = 5
-SLOTS_PER_DAY = 12
 
 def read_input():
     input = sys.stdin.read
     data = input().splitlines()
-    
     T, N, M = map(int, data[0].split())
     
     class_subjects = []
@@ -91,7 +88,7 @@ def evaluate_solution(solution, subject_hours):
             else:
                 teacher_schedule[t].add((d, slot))
                 
-    # Add a small penalty for higher 'u' values
+    # Penalize late slots
     for assignment in solution:
         _, _, _, d, s = assignment
         u = d * SLOTS_PER_DAY + s + 1
@@ -103,7 +100,7 @@ def generate_neighbor(solution, T, N, M, class_subjects, teacher_subjects, subje
     index = random.randint(0, len(neighbor) - 1)
     n, m, t, d, s = neighbor[index]
     
-    if random.random() < 0.5:
+    if random.random() < 0.5: # Can adjust probability
         # Change teacher
         available_teachers = [t for t in range(T) if m in teacher_subjects[t]]
         if available_teachers:
@@ -178,6 +175,8 @@ def assignment(best_solution):
 
 if __name__ == "__main__":
     T, N, M, class_subjects, teacher_subjects, subject_hours = read_input()
+    DAYS = 5
+    SLOTS_PER_DAY = 12
     initial_temp = 1000
     cooling_rate = 0.95
     min_temp = 1
