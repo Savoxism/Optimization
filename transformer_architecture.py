@@ -235,7 +235,6 @@ class Encoder(nn.Module):
             x = self.layers[i](x, mask)
         return self.norm(x)
         
-        
 class Decoder(nn.Module):
     def __init__(self, vocab_size, d_model, N, heads, dropout):
         super().__init__()
