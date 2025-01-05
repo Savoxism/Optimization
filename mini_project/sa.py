@@ -189,12 +189,7 @@ if __name__ == "__main__":
     print(len(valid_assignments))  # K: Total number of valid assignments
     for assignment in valid_assignments:
         n, m, t, d, s = assignment
-        # Convert to 1-based indexing for output
-        x = n + 1  # Class ID
-        y = m      # Subject ID
-        u = d * SLOTS_PER_DAY + s + 1  # Starting time slot (1-based)
-        v = t + 1  # Teacher ID
-        print(x, y, u, v)
+        print(n + 1, m, d * SLOTS_PER_DAY + s + 1, t + 1)
         
-    # end_time = time.perf_counter()
-    # print(f"Time: {end_time - start_time}")
+    end_time = time.perf_counter()
+    print(f"Time: {end_time - start_time}")

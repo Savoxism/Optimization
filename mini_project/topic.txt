@@ -55,3 +55,23 @@ Output:
 4 4 19 3
 5 1 5 3
 5 3 13 1
+
+======
+Report (Algorithm - Classes * Subjects - Time)
+I) Simulated Annealing
+SA - 20 - 12
+SA - 100 - 37
+SA - 1500 - 170
+SA - 4800 - 227
+SA - 6000 - 318
+
+
+II) Ant Colony Optimization
+ACO - 20 - 12
+ACO - 100 - 37
+ACO - 1500 - 170
+ACO - 4800 - 227
+ACO - 6000 - 318
+
+
+
