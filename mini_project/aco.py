@@ -45,7 +45,6 @@ def generate_solution(class_subjects, teacher_subjects, subject_hours, pheromone
             probabilities = (pheromone_matrix ** alpha) * (heuristic_matrix ** beta)
             total_prob = np.sum(probabilities)
 
-            # Skip if no valid (teacher, day) pairs are available
             if total_prob == 0:
                 continue
 

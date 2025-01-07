@@ -1,6 +1,6 @@
 import sys
 """
-n = 2, m = 3
+n = 2, m = 4
 
 fx = 3 * x1 + 4 * x2
 
@@ -15,7 +15,7 @@ The contraints have excluded the non-negative constraints for x1 and x2.
 2 1
 1 2
 1 -1
-7 8 2
+7 8 2 
 """
 
 def read_inputs():
