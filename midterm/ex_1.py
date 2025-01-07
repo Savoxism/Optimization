@@ -24,6 +24,7 @@ def read_input():
 def solve(n, m, A, B, C): 
     solver = pywraplp.Solver.CreateSolver('GLOP')
     
+    # Amounts of goods transported from supplier i to consumer j
     x = [
         [solver.NumVar(0, solver.infinity(), f'x[{i}][{j}]') for j in range(m)] for i in range(n)
         ]

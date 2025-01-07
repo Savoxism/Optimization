@@ -27,6 +27,13 @@ import sys
 '''
 
 def read_input():
+    '''
+    n: number of nodes
+    m: number of edges
+    k; number of forbidden pairs
+    s: source node
+    t: target node
+    '''
     input = sys.stdin.read()
     lines = input.split('\n')
     n, m, k, s, t = map(int, lines[0].split())
@@ -49,14 +56,16 @@ def solve(n, m, k, s, t, edges, forbidden_pairs):
     graph = defaultdict(list)
     forbidden_set = set()
     
+    # Add edges to graph
     for u, v, cost in edges:
         graph[u].append((v, cost))
         
+    # Add forbidden pairs to set
     for e1_start, e1_end, e2_start, e2_end in forbidden_pairs:
         forbidden_set.add(((e1_start, e1_end), (e2_start, e2_end)))
         forbidden_set.add(((e2_start, e2_end), (e1_start, e1_end)))
         
-    pq = [(0, s, None)] 
+    pq = [(0, s, None)] # (cost, current_edge, last_edge)
     visited = set()      
 
     while pq:
@@ -73,7 +82,7 @@ def solve(n, m, k, s, t, edges, forbidden_pairs):
         for neighbor, edge_cost in graph[current]:
             current_edge = (current, neighbor)
             
-            # Applying constraint
+            # 1) If there is a previous edge 2) if the pair (last_edge, current_edge) is in the forbidden set
             if last_edge and ((last_edge, current_edge) in forbidden_set):
                 continue
             

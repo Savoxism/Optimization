@@ -1,23 +1,20 @@
 def a_star_search(graph, heuristics, start, goal):
     open_set = [(start, 0)]
     
-    # Track the actual cost from the start node
     g_score = {node: float("inf") for node in graph}
     g_score[start] = 0
-    
     came_from = {}
     
     while open_set:
         current = min(open_set, key=lambda x: g_score[x[0]] + heuristics[x[0]])[0] # f(n) = g(n) + h(n)
         
-        # If the current node is the goal node -> Path reconstruction
+        # if current = goal -> path reconstruction
         if current == goal:
             path = []
             while current in came_from:
                 path.append(current)
                 current = came_from[current]
                 
-            # Add the start node 
             path.append(start)
             path.reverse()
             
@@ -27,16 +24,12 @@ def a_star_search(graph, heuristics, start, goal):
         open_set = [node for node in open_set if node[0] != current]
         
         for neighbor, cost in graph[current]:
-            # Calculate the tentative g(n) for the neighbor
-            tentative_g_score = g_score[current] + cost
+            tentative_g_score = g_score[current] + cost # g(n)
 
-            # If a shorter path to neighbor is found
             if tentative_g_score < g_score[neighbor]:
-                # Update the path to this neighbor
                 came_from[neighbor] = current
                 g_score[neighbor] = tentative_g_score
 
-                # Add the neighbor to the open set (re-prioritize if already present)
                 open_set.append((neighbor, g_score[neighbor]))
                 
     return None, float("inf")

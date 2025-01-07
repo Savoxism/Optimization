@@ -91,12 +91,10 @@ def ACO(T, N, M, class_subjects, teacher_subjects, subject_hours, num_ants=10, n
                 class_subjects, teacher_subjects, subject_hours, pheromone_matrix, T, N, M, alpha, beta
             )
 
-            # Update the best solution found 
             if len(solution) > best_assignment_count:
                 best_solution = solution
                 best_assignment_count = len(solution)
 
-        # Update pheromone matrix based on the best solution
         update_pheromone(pheromone_matrix, best_solution, evaporation_rate, rho)
 
     return best_solution
