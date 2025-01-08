@@ -1,5 +1,15 @@
 import sys
 
+'''
+4 3
+1 2 -1 1
+1 1 -1 -1
+1 0 1 1
+1 -1 -1 0
+4 7 2
+= = =
+'''
+
 def read_input():
     '''
     n: Number of variables
@@ -25,7 +35,6 @@ def read_input():
     return n, m, C, A, b, constraint_types
 
 ### PHASE 1 ###
-
 def add_slack_and_artificial_variables(A, b, m, constraint_types):
     tableau = []
     num_artificial = 0
@@ -56,7 +65,7 @@ def add_slack_and_artificial_variables(A, b, m, constraint_types):
             
         elif constraint_types[i] == '=':
             artificial = [0] * num_artificial
-            artificial[len(artificial_indices)] = 1  # Coefficient of 1 for the new artificial variable
+            artificial[len(artificial_indices)] = 1  # Coefficient of 1 
             tableau.append(A[i] + [0] * m + artificial + [0, b[i]])
             artificial_index = n + m + len(artificial_indices)
             artificial_indices.append(artificial_index)
@@ -88,40 +97,134 @@ def update_tableau(tableau):
     
     return tableau
 
+def simplex_method_phase1(tableau, artificial_indices):
+    while True:
+        if all(c >= 0 for c in tableau[-1][:-1]):
+            break
+        
+        entering = tableau[-1][:-1].index(min(tableau[-1][:-1]))  # Column index
+        
+        # Check for unboundedness
+        if all(row[entering] <= 0 for row in tableau[:-1]):
+            return tableau, "INFEASIBLE"
+        
+        # Choose leaving variable (minimum ratio test)
+        ratios = []
+        for row in tableau[:-1]:
+            if row[entering] > 0:
+                ratio = row[-1] / row[entering]
+                ratios.append(ratio)
+            else:
+                ratios.append(float('inf'))
+        leaving = ratios.index(min(ratios))  # Row index
+        
+        # Perform pivot operation
+        pivot = tableau[leaving][entering]
+        tableau[leaving] = [x / pivot for x in tableau[leaving]]
+        for i, row in enumerate(tableau):
+            if i != leaving:
+                factor = row[entering]
+                tableau[i] = [row[j] - factor * tableau[leaving][j] for j in range(len(row))]
+    
+    # Check if Phase 1 was successful (optimal value should be 0)
+    optimal_value = tableau[-1][-1]
+    if abs(optimal_value) > 1e-6: 
+        return tableau, "INFEASIBLE"
+    
+    # Remove artificial variables and Phase 1 objective row
+    new_tableau = []
+    for row in tableau[:-1]: 
+        new_row = [row[j] for j in range(len(row)) if j not in artificial_indices]
+        new_tableau.append(new_row)
+    
+    return new_tableau, "PHASE1_COMPLETE"
+
+### PHASE 2 ###
+def add_phase2_objective_row(tableau, c):
+    objective_row = [0] * len(tableau[0]) 
+    objective_row[-2] = 1  # Coefficient of 1 for z-column
+    
+    for i in range(len(c)):
+        objective_row[i] = -c[i]
+        
+    tableau.append(objective_row)
+    return tableau
+
+def simplex_method_phase2(tableau, n):
+    while True:
+        if all(c >= 0 for c in tableau[-1][:-1]):
+            break
+    
+        entering = tableau[-1][:-1].index(min(tableau[-1][:-1]))  # Column index
+        
+        if all(row[entering] <= 0 for row in tableau[:-1]):
+            return [], 0, "UNBOUNDED"
+
+        ratios = []
+        for row in tableau[:-1]:
+            if row[entering] > 0:
+                ratio = row[-1] / row[entering]
+                ratios.append(ratio)
+            else:
+                ratios.append(float('inf'))
+        leaving = ratios.index(min(ratios))  # Row index
+        
+        # Perform pivot operation
+        pivot = tableau[leaving][entering]
+        tableau[leaving] = [x / pivot for x in tableau[leaving]]  # Make pivot element 1
+        for i, row in enumerate(tableau):
+            if i != leaving:
+                factor = row[entering]
+                tableau[i] = [row[j] - factor * tableau[leaving][j] for j in range(len(row))]
+                
+    solution = [0] * n
+    for i in range(n):
+        column = [row[i] for row in tableau[:-1]]  # Exclude objective row
+        if column.count(0) == len(column) - 1 and 1 in column:  # Check unit vector
+            solution[i] = tableau[column.index(1)][-1]
+    
+    # Optimal value is in the RHS of the objective row
+    optimal_value = tableau[-1][-1]
+    
+    return solution, optimal_value, "OPTIMAL"
+
+def solve(A, b, m, constraint_types, c):
+    tableau, _, artificial_indices = add_slack_and_artificial_variables(A, b, m, constraint_types)
+    
+    tableau = add_phase1_objective_row(tableau, artificial_indices)
+    
+    tableau = update_tableau(tableau)
+
+    tableau, status = simplex_method_phase1(tableau, artificial_indices)
+    
+    if status == "INFEASIBLE":
+        return [], 0, "INFEASIBLE"
+    
+    for row in tableau:
+        row.insert(-1, 0)  # Insert 0 for z-column just before the RHS column
+    
+    tableau = add_phase2_objective_row(tableau, c)
+        
+    n = len(c) 
+    solution, optimal_value, status = simplex_method_phase2(tableau, n)
+     
+    return solution, optimal_value, status
+
 
 # Example input
-A = [
-    [1, 1, -1, -1],  # Coefficients for constraint 1
-    [1, 0, 1, 1],  # Coefficients for constraint 2
-    [1, -1, -1, 0]  # Coefficients for constraint 3
-]
-b = [4, 7, 2]
-m = 3
-constraint_types = ['=', '=', '=']
+# n, m = 4, 3
+# C = [1, 2, -1, 1]
+# A = [
+#     [1, 1, -1, -1],  # Coefficients for constraint 1
+#     [1, 0, 1, 1],  # Coefficients for constraint 2
+#     [1, -1, -1, 0]  # Coefficients for constraint 3
+# ]
+# b = [4, 7, 2]
+# constraint_types = ['=', '=', '=']
 
-# Step 1: Add slack and artificial variables
-tableau, num_artificial, artificial_indices = add_slack_and_artificial_variables(A, b, m, constraint_types)
-
-# Print the initial tableau
-print("Initial Tableau:")
-for row in tableau:
-    print(row)
-print("Number of artificial variables:", num_artificial)
-print("Indices of artificial variables:", artificial_indices)
-
-# Step 2: Add the Phase 1 objective row
-updated_tableau = add_phase1_objective_row(tableau, artificial_indices)
-
-# Print the updated tableau
-print("\nUpdated Tableau:")
-for row in updated_tableau:
-    print(row)
-
-# Step 3: Update the tableau
-updated_tableau = update_tableau(updated_tableau)
-
-# Print the updated tableau
-print("\nUpdated Tableau 2 :")
-for row in updated_tableau:
-    print(row)
-    
+if __name__ == "__main__":
+    n, m, C, A, b, constraint_types = read_input()
+    solution, optimal_value, status = solve(A, b, m, constraint_types, C)
+    print(f"Solutions are: {solution}")
+    print("The optimal value is:", optimal_value)
+    print(status)
