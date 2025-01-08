@@ -1,23 +1,4 @@
 import sys
-from io import StringIO
-
-"""
-fx = 3 * x1 + 4 * x2
-
-2 * x1 + x2 <= 7
-x1 + 2 * x2 <= 8
-x1 - x2 <= 2
-
-The contraints have excluded the non-negative constraints for x1 and x2.
-
-2 3
-3 4
-2 1
-1 2
-1 -1
-7 8 2 
-<= >= =
-"""
 
 def read_input():
     '''
@@ -43,80 +24,104 @@ def read_input():
 
     return n, m, C, A, b, constraint_types
 
+### PHASE 1 ###
+
 def add_slack_and_artificial_variables(A, b, m, constraint_types):
     tableau = []
     num_artificial = 0
     artificial_indices = []
     
-    # Number of original variables
     n = len(A[0]) if A else 0
     
-    # Count the number of artificial variables needed
     for constraint_type in constraint_types:
         if constraint_type == '>=' or constraint_type == '=':
             num_artificial += 1
     
     for i in range(m):
-        # Initialize slack variables for all constraints
-        slack = [0] * m  # All slack variables start with coefficient 0
+        slack = [0] * m  # Coefficient 0 initially 
         
         if constraint_types[i] == '<=':
-            # Add slack variable for <= constraint
-            slack[i] = 1  # Coefficient of 1 for s_i
-            # Pad with 0s for artificial variables
+            slack[i] = 1  # Coefficient of 1 
             artificial = [0] * num_artificial
-            tableau.append(A[i] + slack + artificial + [b[i]])
+            tableau.append(A[i] + slack + artificial + [0, b[i]])
             
         elif constraint_types[i] == '>=':
-            # Add slack variable and artificial variable for >= constraint
-            slack[i] = -1  # Coefficient of -1 for s_i
+            slack[i] = -1  # Coefficient of -1 
             artificial = [0] * num_artificial
-            artificial[num_artificial - 1] = 1  # Coefficient of 1 for the new artificial variable
-            tableau.append(A[i] + slack + artificial + [b[i]])
-            # Calculate the index of the artificial variable
-            artificial_index = n + m + num_artificial - 1
+            artificial[len(artificial_indices)] = 1  # Coefficient of 1 
+            tableau.append(A[i] + slack + artificial + [0, b[i]])
+
+            artificial_index = n + m + len(artificial_indices)
             artificial_indices.append(artificial_index)
             
         elif constraint_types[i] == '=':
-            # Add artificial variable for equality constraint
             artificial = [0] * num_artificial
-            artificial[num_artificial - 1] = 1  # Coefficient of 1 for the new artificial variable
-            tableau.append(A[i] + [0] * m + artificial + [b[i]])
-            # Calculate the index of the artificial variable
-            artificial_index = n + m + num_artificial - 1
+            artificial[len(artificial_indices)] = 1  # Coefficient of 1 for the new artificial variable
+            tableau.append(A[i] + [0] * m + artificial + [0, b[i]])
+            artificial_index = n + m + len(artificial_indices)
             artificial_indices.append(artificial_index)
             
     return tableau, num_artificial, artificial_indices
 
+def add_phase1_objective_row(tableau, artificial_indices):
+    objective_row = [0] * len(tableau[0])
+    
+    g_column_index = len(tableau[0]) - 2
+    objective_row[g_column_index] = 1  # Coefficient of 1 
+    
+    for idx in artificial_indices:
+        objective_row[idx] = 1
+        
+    tableau.append(objective_row)
+    
+    return tableau
+
+def update_tableau(tableau):
+    objective_row = tableau[-1]
+    
+    for row_index in range(len(tableau) - 1):
+        row_to_subtract = tableau[row_index]
+        for i in range(len(objective_row)):
+            objective_row[i] -= row_to_subtract[i]
+            
+    tableau[-1] = objective_row
+    
+    return tableau
 
 
 # Example input
 A = [
-    [1, 1],  # Coefficients for constraint 1
-    [2, 1],  # Coefficients for constraint 2
-    [1, -1]  # Coefficients for constraint 3
+    [1, 1, -1, -1],  # Coefficients for constraint 1
+    [1, 0, 1, 1],  # Coefficients for constraint 2
+    [1, -1, -1, 0]  # Coefficients for constraint 3
 ]
-b = [4, 6, 1]
+b = [4, 7, 2]
 m = 3
-constraint_types = ['<=', '>=', '=']
+constraint_types = ['=', '=', '=']
 
-# Call the corrected function
+# Step 1: Add slack and artificial variables
 tableau, num_artificial, artificial_indices = add_slack_and_artificial_variables(A, b, m, constraint_types)
 
-# Print the results
-print("Tableau:")
+# Print the initial tableau
+print("Initial Tableau:")
 for row in tableau:
     print(row)
 print("Number of artificial variables:", num_artificial)
 print("Indices of artificial variables:", artificial_indices)
 
+# Step 2: Add the Phase 1 objective row
+updated_tableau = add_phase1_objective_row(tableau, artificial_indices)
 
+# Print the updated tableau
+print("\nUpdated Tableau:")
+for row in updated_tableau:
+    print(row)
 
+# Step 3: Update the tableau
+updated_tableau = update_tableau(updated_tableau)
 
-
-
-
-
-
-
-
+# Print the updated tableau
+print("\nUpdated Tableau 2 :")
+for row in updated_tableau:
+    print(row)
+    
