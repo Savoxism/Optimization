@@ -9,7 +9,6 @@ def read_input():
         cost_matrix.append(row)
     return n, cost_matrix
 
-# Find subtours in the current solution
 def check_subtours(x_val, n):
     visited = set()
     subtours = []
@@ -37,7 +36,6 @@ def check_subtours(x_val, n):
     return subtours
 
 def solve_tsp(n, cost_matrix):
-    # Setup solver
     solver = pywraplp.Solver.CreateSolver('SCIP')
     if not solver:
         print('Solver not found')
@@ -54,26 +52,20 @@ def solve_tsp(n, cost_matrix):
     # Objective function: minimize total cost
     solver.Minimize(solver.Sum(cost_matrix[i][j] * x[i][j] for i in range(n) for j in range(n)))
     
-    # Solve initially without subtour elimination constraints
     solver.Solve()
     
-    # Check for subtours
     while True:
-        # Get the current solution
         x_val = [[x[i][j].solution_value() for j in range(n)] for i in range(n)]
         
-        # Check for subtours in the solution
         subtours = check_subtours(x_val, n)
         if not subtours:
-            break  # valid solution found
+            break  
         
-        # Add subtour elimination constraints
         for subtour in subtours:
             solver.Add(
                 solver.Sum(x[i][j] for i in subtour for j in subtour if i != j) <= len(subtour) - 1
             )
 
-        # Re-solve with the new constraints
         solver.Solve()
         
     # Extract the final tour

@@ -38,18 +38,16 @@ def simulated_annealing():
     max_iterations = 10000
     no_improvement_limit = 5000 
     
-    # initialize current (initial) tour and cost
+    # Initial solution
     current_tour = generate_initial_solution(num_cities)
     current_cost = calculate_cost(current_tour, cost_matrix)
     
-    # initialize best tour and cost
     best_tour = current_tour[:]
     best_cost = current_cost
     
     T = T0
     iteration = 0
     no_improvement_counter = 0
-    
     while T > min_temp and iteration < max_iterations:
         new_tour = generate_neighbor(best_tour)
         new_cost = calculate_cost(new_tour, cost_matrix)
@@ -62,7 +60,6 @@ def simulated_annealing():
            current_tour = new_tour
            current_cost = new_cost
            
-           # update best tour and cost (if applicable)
            if current_cost < best_cost:
                best_tour = current_tour
                best_cost = current_cost
@@ -77,10 +74,10 @@ def simulated_annealing():
         T *= alpha
         iteration = iteration + 1
     
-    return best_cost, best_tour
+    return num_cities, best_cost, best_tour
 
 # Example Usage
 if __name__ == "__main__":
-    best_tour, best_cost = simulated_annealing()
-    print("Best Tour:", best_tour)
-    print("Best Cost:", best_cost)
+    num_cities, best_cost, best_tour = simulated_annealing()
+    print(num_cities)
+    print(" ".join(map(str, [x + 1 for x in best_tour])))  # Adding 1 to convert from 0-based to 1-based indexing

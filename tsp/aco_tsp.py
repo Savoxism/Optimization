@@ -89,7 +89,6 @@ def ACO(n, cost_matrix, alpha=1, beta=2, p=0.1, q=100, iterations=100):
     best_cost = float('inf')
     
     for iteration in range(iterations):
-        # Generate initial solutions
         solutions = generate_initial_solution(n, pheromone_matrix, visibility_matrix, alpha, beta)
         
         # Apply 2-opt to improve each solution
@@ -107,7 +106,6 @@ def ACO(n, cost_matrix, alpha=1, beta=2, p=0.1, q=100, iterations=100):
             best_cost = iteration_best_cost
             best_tour = iteration_best_tour
             
-        # Debug: Print reduction in distance
         if iteration > 0:
             print(f"Iteration {iteration}, Best cost: {best_cost:.2f}")
         previous_best_cost = best_cost
