@@ -106,7 +106,7 @@ def solve():
     if status == "OPTIMAL":
         print(n)
         print(" ".join(map(str, solution)))  
-        # print(optimal_value)
+        print(optimal_value)
     elif status == "UNBOUNDED":
         print("UNBOUNDED")
         
