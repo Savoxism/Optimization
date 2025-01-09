@@ -5,7 +5,6 @@ def solve(grid):
     
     n = 9
     cells = range(n)
-    # Initialize decision variables
     x = [[model.NewIntVar(1, n, f'x[{row}][{col}]') for col in cells] for row in cells]
     
     # Row constraints

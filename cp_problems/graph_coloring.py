@@ -10,7 +10,6 @@ def solve(graph):
     colors = [model.NewIntVar(0, num_nodes - 1, f'color[{node}]') for node in nodes]
     
     # Constraint: adjacent nodes must have different colors
-    
     for node, neighbors in enumerate(graph):
         for neighbor in neighbors:
             if node < neighbor:
