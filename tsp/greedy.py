@@ -13,7 +13,7 @@ def read_input():
     
     return n, cost_matrix 
 
-def nearest_neighbor_tsp(n, cost_matrix):
+def greedy(n, cost_matrix):
     visited = [False] * n
     tour = []
     current_city = 0
@@ -43,7 +43,7 @@ def nearest_neighbor_tsp(n, cost_matrix):
 
 n, cost_matrix = read_input()
 
-tour, total_cost = nearest_neighbor_tsp(n, cost_matrix)
+tour, total_cost = greedy(n, cost_matrix)
 
 new_tour = ' '.join(str(city) for city in tour)
 
