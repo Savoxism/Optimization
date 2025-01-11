@@ -2,7 +2,6 @@ from ortools.linear_solver import pywraplp
 import sys
 
 def read_input():
-    # Read the first line for the number of teachers (m) and courses (n)
     m, n = map(int, sys.stdin.readline().strip().split())
     
     # Read the next m lines for the preference list
