@@ -65,8 +65,8 @@ heuristics = {
     "V": 0,
 }
 
-start = "HB"
-goal = "NB"
+start = "HN"
+goal = "V"
 
 path, cost = a_star_search(graph, heuristics, start, goal)
 print("Path:", path)
