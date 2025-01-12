@@ -35,7 +35,6 @@ import sys
 def read_input():
     input = sys.stdin.read().splitlines()
     
-    # Number of teachers and courses
     m, n = map(int, input[0].split())
     
     # Preference list
@@ -52,7 +51,7 @@ def read_input():
     B = []
     for i in range(m + 2, m + 2 + k):
         i, j = map(int, input[i].split())
-        B.append([i - 1, j - 1])
+        B.append([i - 1, j - 1]) 
         
     return m, n, A, B
 

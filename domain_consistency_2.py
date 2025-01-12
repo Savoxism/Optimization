@@ -1,126 +1,79 @@
 import sys
+from collections import deque
 
-class Variable:
-    def __init__(self, domain, name):
-        self.domain = set(domain)
-        self.name = name
-
-    def remove(self, value):
-        self.domain.discard(value)
-
-    def is_empty(self):
-        return len(self.domain) == 0
-
-class Constraint:
-    def __init__(self, var1, var2, delta, name):
-        self.var1 = var1
-        self.var2 = var2
-        self.delta = delta
-        self.name = f"{name} ({var1.name} <= {var2.name} + {delta})"
-
-    def involves(self, variable):
-        return variable == self.var1 or variable == self.var2
-
-    def is_satisfied(self, val1, val2):
-        return val1 <= val2 + self.delta
-
-    def get_other_variable(self, variable):
-        if variable == self.var1:
-            return self.var2
-        elif variable == self.var2:
-            return self.var1
-        return None
-
-
-class ArcConsistency:
-    def __init__(self):
-        self.constraints = []
-        self.agenda = []
-
-    def add_constraint(self, constraint):
-        self.constraints.append(constraint)
-
-    def contains_in_agenda(self, variable, constraint):
-        return any(var == variable and cons == constraint for var, cons in self.agenda)
-
-    def ac3(self):
-        self.agenda = [(variable, constraint)
-                       for constraint in self.constraints
-                       for variable in (constraint.var1, constraint.var2)
-                       ]
-        print("Initial Agenda:")
-        for var, cons in self.agenda:
-            print(f"  {cons.name} involving {var.name}")
-
-        while self.agenda:
-            print("\nCurrent Agenda:")
-            for var, cons in self.agenda:
-                print(f"  {cons.name} involving {var.name}")
-            
-            variable, constraint = self.agenda.pop(0)
-            print(f"\nProcessing: {constraint.name} for {variable.name}")
-            
-            if self.revise(variable, constraint):
-                print(f"Domain revised for {variable.name}: {variable.domain}")
-                if variable.is_empty():
-                    print(f"FAIL: {variable.name} domain is empty.")
-                    return False
-                for other_constraint in self.constraints:
-                    if other_constraint != constraint and other_constraint.involves(variable):
-                        other_var = other_constraint.get_other_variable(variable)
-                        if not self.contains_in_agenda(other_var, other_constraint):
-                            self.agenda.append((other_var, other_constraint))
-                            print(f"  Added {other_constraint.name} involving {other_var.name} to agenda.")
-        return True
-
-    def revise(self, variable, constraint):
-        other_variable = constraint.get_other_variable(variable)
-        to_remove = []
-        print(f"  Revising {variable.name} with {other_variable.name}. Current domain: {variable.domain}")
+def read_input():
+    input = sys.stdin.read().splitlines()
+    
+    n = int(input[0])
+    
+    domain = {}
+    for i in range(n):
+        t = [int(x) for x in input[i + 1].split()]
+        domain[f"x{i+1}"] = t[1:]
         
-        for val in variable.domain:
-            if variable == constraint.var1:
-                satisfies = any(constraint.is_satisfied(val, other_val)
-                                for other_val in other_variable.domain)
+    m = int(input[n + 1])
+    constraints = []
+    for i in range(m):
+        temp = [int(x) for x in input[n + i + 2].split()]   
+        constraints.append((f"x{temp[0]}", f"x{temp[1]}", temp[2]))
+    
+    return n, domain, m, constraints
+
+def AC3(domain, constraints):
+    queue = deque(constraints)
+    
+    while queue:
+        ele = queue.popleft() # leftmost element 
+        if reviseAC3(ele, domain):
+            # Check if the domain of x_i or x_j has become empty
+            if not domain[ele[0]] or not domain[ele[1]]:
+                return False
             else:
-                satisfies = any(constraint.is_satisfied(other_val, val)
-                                for other_val in other_variable.domain)
+                for constraint in constraints:
+                    # This condition checks if the current constraint (ele) is related to another constraint in the list.
+                    if (ele[0] in constraint or ele[1] in constraint) and constraint != ele:
+                        queue.append(constraint)
+    
+    return True
 
-            if not satisfies:
-                to_remove.append(val)
+def reviseAC3(ele, domain):
+    changed = False
+    
+    # Check for Xi <= Xj + D
+    for value0 in domain[ele[0]].copy():
+        found = False
+        for value1 in domain[ele[1]]:
+            if value0 <= value1 + ele[2]:
+                found = True
+                break
+        
+        if found == False:
+            domain[ele[0]].remove(value0)
+            changed = True
+            
+    # Check for Xj >= Xi - D
+    for value1 in domain[ele[1]].copy():
+        found = False
+        for value0 in domain[ele[0]]:
+            if value1 >= value0 - ele[2]:
+                found = True
+                break
+        
+        if found == False:
+            domain[ele[1]].remove(value1)
+            changed = True
+            
+    return changed
 
-        for value in to_remove:
-            print(f"    Removing {value} from {variable.name}")
-            variable.remove(value)
-
-        return bool(to_remove)
-
-
-# Input processing
-[n] = [int(x) for x in sys.stdin.readline().split()]
-variables = []
-arc_consistency = ArcConsistency()
-
-# Read variables and their domains
-for i in range(n):
-    line = [int(x) for x in sys.stdin.readline().split()]
-    domain = set(line[1:])
-    variable = Variable(domain, f"X{i + 1}")
-    variables.append(variable)
-
-# Read constraints
-[m] = [int(x) for x in sys.stdin.readline().split()]
-for k in range(m):
-    i, j, d = [int(x) for x in sys.stdin.readline().split()]
-    constraint = Constraint(variables[i - 1], variables[j - 1], d, f"Constraint{k + 1}")
-    arc_consistency.add_constraint(constraint)
-
-# Run AC-3 algorithm
-if not arc_consistency.ac3():
-    print("FAIL")
-else:
-    print("\nFinal Domains:")
-    for variable in variables:
-        sorted_domain = sorted(variable.domain)
-        print(f"{variable.name}: {sorted_domain}")
-        print(len(sorted_domain), *sorted_domain)
+def solve(n, domain, m, constraints):
+    if AC3(domain, constraints):
+       for var in sorted(domain.keys()):
+           values = sorted(domain[var])
+           print(len(values), end=" ")
+           print(*values)
+    else:
+        print("FAIL")
+        
+if __name__ == "__main__":
+    n, domain, m, constraints = read_input()
+    solve(n, domain, m, constraints)

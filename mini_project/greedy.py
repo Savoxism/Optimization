@@ -34,7 +34,7 @@ def assign_classes(T, N, M, class_subjects, teacher_subjects, subject_hours):
     class_subject_combinations = []
     for c in range(N):
         for subject in class_subjects[c]:
-            class_subject_combinations.append((c, subject))
+            class_subject_combinations.append((c, subject)) 
 
     # Sort by subject hours descending (greedy criterion)
     class_subject_combinations.sort(key=lambda x: -subject_hours[x[1] - 1])
