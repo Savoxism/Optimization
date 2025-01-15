@@ -32,6 +32,7 @@ import sys
 10 11
 11 12
 """
+
 def read_input():
     input = sys.stdin.read().splitlines()
     
@@ -55,44 +56,44 @@ def read_input():
         
     return m, n, A, B
 
-def solve(m, n, A, B):
-    load = [0] * m
+def assign_courses(m, n, A, B):
+    conflict_count = [0] * n
+    for conflict in B:
+        conflict_count[conflict[0]] += 1
+        conflict_count[conflict[1]] += 1
     
-    conflict_graph = {i: set() for i in range(n)}
-    for u, v in B:
-        conflict_graph[u].add(v)
-        conflict_graph[v].add(u)
-        
-    # Sort courses by the number of conflicts (descending order)
-    sorted_courses = sorted(range(n), key=lambda x: len(conflict_graph[x]), reverse=True)
+    sorted_courses = sorted(range(n), key=lambda x: -conflict_count[x])
+    
+    # Initialize the load for each teacher
+    load = [0] * m
+    # Initialize the list of assigned courses for each teacher
+    assigned = [set() for _ in range(m)]
     
     for course in sorted_courses:
-        eligible_teachers = [teacher for teacher in range(m) if course in A[teacher]]
+        # eligible teacher with minimal load
+        min_load = float('inf')
+        best_teacher = -1
         
-        min_load = 9999999
-        selected_teacher = -1
-        
-        for teacher in eligible_teachers:
-            # Choose the teacher with the minimum load
-            if load[teacher] < min_load:
-                has_conflict = False
-                for assigned_course in A[teacher]:
-                    if assigned_course in conflict_graph[course]:
-                        has_conflict = True
+        for teacher in range(m):
+            if course in A[teacher]:
+                conflict_found = False
+                for assigned_course in assigned[teacher]:
+                    if [course, assigned_course] in B or [assigned_course, course] in B:
+                        conflict_found = True
                         break
-                    
-                if not has_conflict:
+                if not conflict_found and load[teacher] < min_load:
                     min_load = load[teacher]
-                    selected_teacher = teacher
-                    
-        if selected_teacher == -1:
+                    best_teacher = teacher
+        
+        # if no teacher is eligible            
+        if best_teacher == -1:
             return -1
         
-        load[selected_teacher] += 1
+        assigned[best_teacher].add(course)
+        load[best_teacher] += 1
     
     return max(load)
 
-if __name__ == "__main__":
-    m, n, A, B = read_input()
-    result = solve(m, n, A, B)
-    print(result)
+m, n, A, B = read_input()
+result = assign_courses(m, n, A, B)
+print(result)
