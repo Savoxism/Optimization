@@ -1,0 +1,9 @@
+There are n passengers 1, 2, ... n. The passenger i wants to travel from point i to point i + n. There is a bus located at point 0 and has k places for transporting the passengers (it means at any time, there are at most k passengers on the bus). You are given the distance matrix c in which c(i,j) is the traveling distance from point i to point j (i, j = 0,1,…, 2n). Compute the shortest route for the bus, serving n passengers and coming back to point 0.
+
+Input
+Line 1 contains n and k (1≤n≤1000,1≤k≤50)
+Line i+1 (i=1,2,…,2n+1) contains the (i−1)th line of the matrix c (rows and columns are indexed from 0,1,2,..,2n).
+
+Output
+Line 1: write the value n
+Line 2: Write the sequence of points (pickup and drop-off) of passengers (separated by a SPACE character)
