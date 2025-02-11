@@ -7,7 +7,7 @@ def linear_regression(x, y):
     
     A_T = A.T
     
-    A_TA = np.dot(A_T, A)
+    A_TA = np.dot(A_T, A) 
     
     A_TA_inv = np.linalg.inv(A_TA)
     
