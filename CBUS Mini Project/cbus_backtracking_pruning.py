@@ -81,5 +81,5 @@ n, k, dist_matrix = read_input()
 result, route = CBUS(n, k, dist_matrix)
 
 print(n)
-# print(result)
+print(result)
 print(" ".join(map(str, route[1:])))  
