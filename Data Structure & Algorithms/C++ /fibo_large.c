@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
-#define BASE 1000000000
-#define MAX_DIGITS 500
+#define BASE 10000000000
+#define MAX_DIGITS 10000
 
 typedef struct {
     long long d[MAX_DIGITS];
