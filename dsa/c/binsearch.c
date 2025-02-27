@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h>
 
 int binsearch(int low, int high, int S[], int key) {
     if (low <= high) {
@@ -40,10 +39,3 @@ int main(void) {
     }
     return 0;
 }
-
-
-
-
-
-
-
