@@ -37,10 +37,8 @@ void Try(int k) {
 }
 
 int main() {
-    // Read input
     scanf("%d %d", &n, &M);  
-
-    // Read cost matrix
+    
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             scanf("%d", &cost_matrix[i][j]);
