@@ -109,10 +109,10 @@ def SA(n, k , c, route):
     return best
 
 
+# usage
 n, k = map(int, sys.stdin.readline().split())
 c = [list(map(int, sys.stdin.readline().split())) for _ in range(2 * n + 1)]
 initial = greedy_initial(n, k, c)
-
 sol = SA(n, k, c, initial)
 
 print(n)

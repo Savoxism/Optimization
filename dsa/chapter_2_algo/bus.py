@@ -13,7 +13,6 @@ sys.setrecursionlimit(1000000)
 '''
 
 n, k = map(int, sys.stdin.readline().split())
-
 c = [list(map(int, sys.stdin.readline().split())) for _ in range(2 * n + 1)]
 
 best = 9999999
@@ -30,12 +29,12 @@ def backtrack(cur_pos, acc_cost, visited_count, load):
     if visited_count == 2 * n:
         best = min(best, acc_cost + c[cur_pos][0])
         
-    for i in range(1, 2*n + 1):
+    for i in range(1, 2 * n + 1):
         if visited[i] == True:
             continue 
         
         if i <= n: # pick up
-            if load < k:
+            if load < k: # bus has enough space
                 visited[i] = True
                 backtrack(i, acc_cost + c[cur_pos][i], visited_count + 1, load + 1)
                 visited[i] = False
