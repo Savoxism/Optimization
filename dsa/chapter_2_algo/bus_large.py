@@ -56,7 +56,7 @@ def is_valid(route, n, k):
         + each passenger is only picked up and dropped off once
     '''
     onboard, load, seen = set(), 0, set()
-    for point in route[1:]:
+    for point in route[1:]: # exlcuding the depot 
         # pick up points
         if 1 <= point <= n:
             if load == k: # bus is full

@@ -1,25 +1,13 @@
-def fibo(n):
-    if n < 2:
-        return n
-    
-    x = 0
-    y = 1
-    for _ in range(2, n+1):
-        z = x + y
-        x = y
-        y = z
-        
-    return y
 
-FibArray = [0, 1]
-def fibonacci(n):
-    if n < 0:
-        print("Incorrect input")
-    elif n <= len(FibArray):
-        return FibArray[n-1]
-    else:
-        temp_fib = fibonacci(n-1) + fibonacci(n-2)
-        FibArray.append(temp_fib)
-        return temp_fib
+n = int(input())
+
+if n <= 1:
+    print(n)
     
-print(fibo(12312321))
+dp = [0] * (n + 1)
+dp[1] = 1
+
+for i in range(2, n + 1):
+    dp[i] = dp[i - 1] + dp[i - 2]
+    
+print(dp[n])
