@@ -1,2 +1,2 @@
 # Overview
-The Github repo contains my solutions to various optimization problems accumulated from some subjects I studied at university: Discrete Math, Intro to Artificial Intelligence, Fundamentals of Optimization
+The Github repo contains my solutions to various optimization problems accumulated from some subjects I studied at university: Discrete Math, Intro to Artificial Intelligence, Fundamentals of Optimization and Data Structure & Algorithm
