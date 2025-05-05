@@ -55,7 +55,7 @@ class DoublyLinkedList:
             new_node.prev = self.tail
             self.tail = new_node
             
-    def add_after(self, u, v): # [5] <-> [4] <-> [3]
+    def add_after(self, u, v):
         if self.exists(u): return
         
         current = self.head
@@ -146,8 +146,6 @@ n = int(input())
 initials = list(map(int, input().split()))
 for val in initials:
     dll.add_last(val)
-
-
 
 while True:
     line = input()
