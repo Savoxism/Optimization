@@ -16,7 +16,7 @@ n, k = map(int, sys.stdin.readline().split())
 c = [list(map(int, sys.stdin.readline().split())) for _ in range(2 * n + 1)]
 
 best = 9999999
-visited = [False] * (2 * n + 1)
+visited = [False] * (2*n + 1)
 load = 0
 
 def backtrack(cur_pos, acc_cost, visited_count, load):

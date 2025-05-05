@@ -35,6 +35,7 @@ class DoublyLinkedList:
         if self.exists(value): return 
         
         new_node = Node(value)
+        # linked is empty firstly
         if self.head is None:
             self.head = self.tail = new_node
         else:
@@ -146,7 +147,8 @@ initials = list(map(int, input().split()))
 for val in initials:
     dll.add_last(val)
 
-# operation center
+
+
 while True:
     line = input()
     if line == "#":

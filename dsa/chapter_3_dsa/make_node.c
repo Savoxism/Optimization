@@ -15,16 +15,16 @@ Node* makeNode(int value) {
 
 Node *insertToHead(Node* head, int X) {
     Node *new_node = makeNode(X);
-    new_node->next = head; // connect new node to current head
-    head = new_node; // head is updated to point to new node 
-    return head; // return because this is pass by value 
+    new_node->next = head; 
+    head = new_node; 
+    return head; 
 }
 
 Node *Insert_After(Node *cur, int X) {
     Node *new_node = makeNode(X);
-    new_node->next = cur->next; // connect new node to the next of current node
-    cur->next = new_node; // current node points to new node
-    return new_node; // return the new node    
+    new_node->next = cur->next; 
+    cur->next = new_node; 
+    return new_node; 
 }
 
 

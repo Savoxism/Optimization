@@ -4,6 +4,7 @@ import sys
 5 5 10
 9 4 10 3 7 
 '''
+
 n, A, B = map(int, sys.stdin.readline().split())
 arr = list(map(int, sys.stdin.readline().split()))
 MAX_SUM = sum(arr)
