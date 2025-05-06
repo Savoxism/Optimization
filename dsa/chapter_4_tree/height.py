@@ -40,29 +40,25 @@ def compute_height(node):
     
     return max_child_height + 1
 
-def main():
-    while True:
-        line = input().strip()
-        if line == '*':
-            break
+while True:
+    line = input().strip()
+    if line == '*':
+        break
 
-        parts = line.split()
-        cmd = parts[0]
+    parts = line.split()
+    cmd = parts[0]
 
-        if cmd == 'MakeRoot' and len(parts) == 2:
-            make_root(int(parts[1]))
+    if cmd == 'MakeRoot' and len(parts) == 2:
+        make_root(int(parts[1]))
 
-        elif cmd == 'Insert' and len(parts) == 3:
-            u, v = int(parts[1]), int(parts[2])
-            insert(u, v)
+    elif cmd == 'Insert' and len(parts) == 3:
+        u, v = int(parts[1]), int(parts[2])
+        insert(u, v)
 
-        elif cmd == 'Height' and len(parts) == 2:
-            u = int(parts[1])
-            height = compute_height(nodes[u])
-            print(f"Height of node {u}: {height}")
-        
-        else:
-            print(f"Invalid command or missing arguments: {line}")
+    elif cmd == 'Height' and len(parts) == 2:
+        u = int(parts[1])
+        height = compute_height(nodes[u])
+        print(f"Height of node {u}: {height}")
 
-if __name__ == "__main__":
-    main()
+    else:
+        print(f"Invalid command or missing arguments: {line}")
