@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/nguyenphuan/Documents/Github/Optimization/dsa/chapter_2_algo/lcs'
+relocations:     []
+...

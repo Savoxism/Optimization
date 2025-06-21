@@ -1,5 +1,4 @@
 import sys
-sys.setrecursionlimit(1000000)
 
 '''
 3 2
