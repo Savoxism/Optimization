@@ -13,7 +13,6 @@ import sys
 """
 
 def input_data():
-    import sys
     input = sys.stdin.readline
     n, m = map(int, input().split())
     edges = []
